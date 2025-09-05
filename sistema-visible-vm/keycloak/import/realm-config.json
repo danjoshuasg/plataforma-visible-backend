@@ -1,0 +1,267 @@
+{
+  "id": "demo-realm",
+  "realm": "demo-realm",
+  "displayName": "Demo Realm",
+  "enabled": true,
+  "registrationAllowed": true,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "sslRequired": "none",
+  "accessTokenLifespan": 1800,
+  "accessTokenLifespanForImplicitFlow": 900,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "clients": [
+    {
+      "id": "demo-client",
+      "clientId": "demo-client",
+      "name": "Demo Client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "rootUrl": "http://localhost:8080",
+      "adminUrl": "http://localhost:8080",
+      "baseUrl": "/",
+      "redirectUris": ["http://localhost:8080/*", "http://localhost:3000/*", "http://localhost:8090/*"],
+      "webOrigins": ["http://localhost:8080", "http://localhost:3000", "http://localhost:8090"],
+      "attributes": {
+        "access.token.lifespan": "1800"
+      },
+      "defaultClientScopes": ["profile", "email", "roles"],
+      "optionalClientScopes": ["address", "phone"],
+      "protocolMappers": [
+        {
+          "name": "Client Role Mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "config": {
+            "user.attribute": "role",
+            "access.token.claim": "resource_access.demo-client.roles",
+            "claim.name": "resource_access.demo-client.roles",
+            "jsonType.label": "String",
+            "multivalued": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "admin-cli",
+      "clientId": "admin-cli",
+      "name": "Admin CLI",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "rootUrl": "http://localhost:8090",
+      "adminUrl": "http://localhost:8090",
+      "baseUrl": "/",
+      "redirectUris": ["http://localhost:8090/*", "http://localhost:3000/*"],
+      "webOrigins": ["http://localhost:8090", "http://localhost:3000"],
+      "attributes": {
+        "access.token.lifespan": "1800"
+      },
+      "defaultClientScopes": ["profile", "email", "roles"],
+      "optionalClientScopes": ["address", "phone"],
+      "protocolMappers": [
+        {
+          "name": "Admin CLI Role Mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "config": {
+            "user.attribute": "role",
+            "access.token.claim": "resource_access.admin-cli.roles",
+            "claim.name": "resource_access.admin-cli.roles",
+            "jsonType.label": "String",
+            "multivalued": "true"
+          }
+        },
+        {
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "foo",
+            "access.token.claim": "resource_access.${client_id}.roles",
+            "claim.name": "resource_access.${client_id}.roles",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect", 
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "foo",
+            "access.token.claim": "realm_access.roles",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "roles",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "foo",
+            "access.token.claim": "resource_access.${client_id}.roles",
+            "claim.name": "resource_access.${client_id}.roles",
+            "jsonType.label": "String",
+            "multivalued": "true"
+          }
+        },
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect", 
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "foo",
+            "access.token.claim": "realm_access.roles",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "authenticated",
+        "description": "Authenticated user"
+      },
+      {
+        "name": "admin",
+        "description": "Administrator"
+      }
+    ],
+    "client": {
+      "demo-client": [
+        {
+          "name": "web_anon",
+          "description": "Anonymous web user"
+        },
+        {
+          "name": "authenticated", 
+          "description": "Authenticated user"
+        },
+        {
+          "name": "admin",
+          "description": "Administrator"
+        }
+      ],
+      "admin-cli": [
+        {
+          "name": "web_anon",
+          "description": "Anonymous web user"
+        },
+        {
+          "name": "authenticated", 
+          "description": "Authenticated user"
+        },
+        {
+          "name": "admin",
+          "description": "Administrator"
+        }
+      ]
+    }
+  },
+  "users": [
+    {
+      "username": "admin@mimp.gob.pe",
+      "email": "admin@mimp.gob.pe",
+      "firstName": "Administrador",
+      "lastName": "Sistema",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin", "authenticated"],
+      "clientRoles": {
+        "admin-cli": ["admin", "authenticated"]
+      },
+      "attributes": {
+        "user_id": ["1"],
+        "nivel_acceso": ["1"],
+        "institucion": ["MIMP"]
+      }
+    },
+    {
+      "username": "editor@mimp.gob.pe",
+      "email": "editor@mimp.gob.pe",
+      "firstName": "Editor",
+      "lastName": "General",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "editor123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["authenticated"],
+      "clientRoles": {
+        "admin-cli": ["authenticated"]
+      },
+      "attributes": {
+        "user_id": ["2"],
+        "nivel_acceso": ["2"],
+        "institucion": ["MIMP"]
+      }
+    },
+    {
+      "username": "observatorio@mimp.gob.pe",
+      "email": "observatorio@mimp.gob.pe",
+      "firstName": "Editor",
+      "lastName": "Observatorio",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "obs123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["authenticated"],
+      "clientRoles": {
+        "admin-cli": ["authenticated"]
+      },
+      "attributes": {
+        "user_id": ["3"],
+        "nivel_acceso": ["3"],
+        "institucion": ["MIMP"]
+      }
+    }
+  ]
+}

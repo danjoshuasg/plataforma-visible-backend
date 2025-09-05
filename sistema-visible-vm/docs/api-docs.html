@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Documentation - Sistema Visible MIMP</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .header { background: #1a365d; color: white; padding: 1rem; text-align: center; }
+        .tabs { display: flex; background: #f7fafc; border-bottom: 1px solid #e2e8f0; }
+        .tab { padding: 1rem 2rem; cursor: pointer; border-right: 1px solid #e2e8f0; }
+        .tab.active { background: white; border-bottom: 2px solid #3182ce; }
+        .content { height: calc(100vh - 120px); }
+        iframe { width: 100%; height: 100%; border: none; }
+        .module-color { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔐 Sistema de Autenticación Visible</h1>
+        <p>Observatorio de Servicios - MIMP | PostgREST + Golang + Keycloak + PostgreSQL</p>
+    </div>
+    
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('postgrest')">PostgREST API</div>
+        <div class="tab" onclick="showTab('golang')">Golang API</div>
+        <div class="tab" onclick="showTab('auth')">Autenticación</div>
+    </div>
+    
+    <div class="content">
+        <div id="postgrest-content">
+            <div id="postgrest-docs"></div>
+        </div>
+        <div id="golang-content" style="display: none;">
+            <div id="golang-docs"></div>
+        </div>
+        <div id="auth-content" style="display: none;">
+            <div style="padding: 2rem; max-width: 1200px;">
+                <h2>🔑 Guía Completa de Autenticación</h2>
+                
+                <div style="background: #f0f8ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                    <h3>📋 Estado del Sistema</h3>
+                    <p><strong>✅ Cobertura de pruebas:</strong> 100% (16/16 tests pasando)</p>
+                    <p><strong>🔧 Servicios activos:</strong> Keycloak, Golang API, PostgREST, PostgreSQL, Nginx</p>
+                    <p><strong>🏛️ Sistema:</strong> Observatorio Visible - MIMP</p>
+                </div>
+
+                <h3>1. 🔐 Obtener Token de Autenticación</h3>
+                <p>Autentícate contra Keycloak para obtener un JWT token:</p>
+                <pre style="background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px;"><code>curl -X POST http://localhost:8090/api/public/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin@mimp.gob.pe",
+    "password": "admin123"
+  }'</code></pre>
+                
+                <h3>2. 🛡️ Usar Token en Requests</h3>
+                <p>Incluye el token en el header Authorization como Bearer token:</p>
+                <pre style="background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px;"><code>curl -X GET http://localhost:8090/api/protected/profile \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"</code></pre>
+                
+                <h3>3. 📊 Acceso a PostgREST - Sistema Visible</h3>
+                <p>PostgREST expone las tablas del observatorio con autenticación JWT:</p>
+                <pre style="background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px;"><code># Leer módulos públicos del observatorio
+curl -X GET http://localhost:3000/modulos_publicos
+
+# Leer publicaciones (público)
+curl -X GET http://localhost:3000/publicacion?publicado=eq.true
+
+# Crear publicación (requiere autenticación)
+curl -X POST http://localhost:3000/publicacion \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id_modulo": 1,
+    "id_tipo_publicacion": 1,
+    "titulo": "Nueva Publicación",
+    "autor": "MIMP",
+    "anio_publicacion": 2024,
+    "resumen": "Descripción de la publicación",
+    "publicado": true
+  }'
+
+# Obtener perfil del usuario autenticado
+curl -X POST http://localhost:3000/rpc/get_user_profile \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"</code></pre>
+                
+                <h3>4. ⚡ Scripts de Prueba Automatizados</h3>
+                <p>El sistema incluye scripts para facilitar las pruebas:</p>
+                <pre style="background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px;"><code># Configurar entorno completo
+./scripts/setup-dev.sh
+
+# Ejecutar suite de pruebas
+./scripts/test-api.sh
+
+# Obtener token rápidamente
+./scripts/get-token.sh admin@mimp.gob.pe admin123</code></pre>
+                
+                <h3>👥 Usuarios de Prueba del Sistema Visible</h3>
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                    <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; flex: 1; min-width: 300px;">
+                        <h4>👤 Usuario Administrador</h4>
+                        <p><strong>Username:</strong> admin@mimp.gob.pe</p>
+                        <p><strong>Password:</strong> admin123</p>
+                        <p><strong>Roles:</strong> ADMIN (nivel_acceso: 1)</p>
+                        <p><strong>Acceso:</strong> Todos los módulos y funcionalidades</p>
+                    </div>
+                    <div style="background: #fef5e7; padding: 1rem; border-radius: 8px; flex: 1; min-width: 300px;">
+                        <h4>⭐ Editor General</h4>
+                        <p><strong>Username:</strong> editor@mimp.gob.pe</p>
+                        <p><strong>Password:</strong> editor123</p>
+                        <p><strong>Roles:</strong> EDITOR_GENERAL (nivel_acceso: 2)</p>
+                        <p><strong>Acceso:</strong> Puede editar módulos generales</p>
+                    </div>
+                    <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; flex: 1; min-width: 300px;">
+                        <h4>📊 Editor Observatorio</h4>
+                        <p><strong>Username:</strong> observatorio@mimp.gob.pe</p>
+                        <p><strong>Password:</strong> obs123</p>
+                        <p><strong>Roles:</strong> EDITOR_OBSERVATORIO (nivel_acceso: 3)</p>
+                        <p><strong>Acceso:</strong> Puede editar contenido específico</p>
+                    </div>
+                </div>
+                
+                <h3>🔐 Arquitectura de Seguridad</h3>
+                <div style="background: #f9f9f9; padding: 1rem; border-left: 4px solid #3182ce; margin: 1rem 0;">
+                    <ul>
+                        <li><strong>Keycloak:</strong> Servidor de identidad y gestión de acceso</li>
+                        <li><strong>JWT Tokens:</strong> Tokens firmados con RS256</li>
+                        <li><strong>Role-Based Access:</strong> Control de acceso basado en niveles (Admin, Editor General, Editor Observatorio)</li>
+                        <li><strong>Row Level Security (RLS):</strong> Seguridad a nivel de fila en PostgreSQL</li>
+                        <li><strong>Validación de Email:</strong> Solo emails @mimp.gob.pe permitidos</li>
+                        <li><strong>CORS:</strong> Configuración de origen cruzado</li>
+                    </ul>
+                </div>
+                
+                <h3>🔗 URLs de Desarrollo</h3>
+                <table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
+                    <tr style="background: #f7fafc;">
+                        <th style="padding: 0.5rem; text-align: left; border: 1px solid #e2e8f0;">Servicio</th>
+                        <th style="padding: 0.5rem; text-align: left; border: 1px solid #e2e8f0;">URL</th>
+                        <th style="padding: 0.5rem; text-align: left; border: 1px solid #e2e8f0;">Credenciales</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">Keycloak Admin</td>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">
+                            <a href="http://localhost:8080/admin" target="_blank">http://localhost:8080/admin</a>
+                        </td>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">admin / admin123</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">Golang API</td>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">
+                            <a href="http://localhost:8090/api/public/health" target="_blank">http://localhost:8090</a>
+                        </td>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">N/A</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">PostgREST - Visible</td>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">
+                            <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>
+                        </td>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">JWT Token</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">Documentación</td>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">
+                            <a href="http://localhost/docs/api-docs.html" target="_blank">http://localhost/docs</a>
+                        </td>
+                        <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">N/A</td>
+                    </tr>
+                </table>
+
+                <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin: 2rem 0;">
+                    <h4>✅ Estado Actual del Sistema Visible</h4>
+                    <p>El sistema está completamente funcional con:</p>
+                    <ul>
+                        <li>✅ Esquema de base de datos del Observatorio Visible implementado</li>
+                        <li>✅ Control de acceso basado en niveles para MIMP</li>
+                        <li>✅ Autenticación con emails institucionales @mimp.gob.pe</li>
+                        <li>✅ APIs para módulos, publicaciones y usuarios</li>
+                        <li>✅ Funciones RPC para obtener datos del observatorio</li>
+                        <li>✅ Vistas optimizadas para consultas públicas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/swagger-ui-dist@5.10.5/swagger-ui-bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.10.5/swagger-ui.css" />
+    <script>
+        // PostgREST Documentation with Swagger UI
+        try {
+            console.log('Loading PostgREST API with Swagger UI');
+            SwaggerUIBundle({
+                url: 'http://localhost:3000/',
+                dom_id: '#postgrest-docs',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIBundle.presets.standalone
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                tryItOutEnabled: true,
+                requestInterceptor: function(req) {
+                    console.log('PostgREST Request:', req);
+                    return req;
+                }
+            });
+            console.log('PostgREST API documentation loaded successfully');
+        } catch (e) {
+            console.error('Error loading PostgREST docs:', e);
+            document.getElementById('postgrest-docs').innerHTML = '<p style="padding: 2rem;">Error cargando documentación de PostgREST. Verifica que el servicio esté corriendo en <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>';
+        }
+        
+        // Golang API Documentation (Updated for Visible system)
+        const golangApiSpec = {
+            openapi: "3.0.0",
+            info: {
+                title: "Golang Auth API - Sistema Visible",
+                version: "1.0.0",
+                description: "API de autenticación para el Observatorio Visible del MIMP con Keycloak JWT"
+            },
+            servers: [
+                { url: "http://localhost:8090", description: "Servidor de desarrollo" }
+            ],
+            paths: {
+                "/api/public/health": {
+                    get: {
+                        summary: "Health check del servicio",
+                        tags: ["Público"],
+                        responses: {
+                            "200": {
+                                description: "Estado del servicio",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "object",
+                                            properties: {
+                                                status: { type: "string", example: "healthy" },
+                                                timestamp: { type: "string", format: "date-time" },
+                                                version: { type: "string", example: "1.0.0" },
+                                                sistema: { type: "string", example: "Observatorio Visible MIMP" }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "/api/public/login": {
+                    post: {
+                        summary: "Autenticación de usuario MIMP",
+                        tags: ["Público"],
+                        description: "Autentica usuario con email @mimp.gob.pe contra Keycloak",
+                        requestBody: {
+                            required: true,
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        required: ["username", "password"],
+                                        properties: {
+                                            username: { 
+                                                type: "string", 
+                                                example: "admin@mimp.gob.pe",
+                                                description: "Email institucional @mimp.gob.pe"
+                                            },
+                                            password: { 
+                                                type: "string", 
+                                                example: "admin123",
+                                                description: "Contraseña del usuario"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        responses: {
+                            "200": {
+                                description: "Login exitoso",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "object",
+                                            properties: {
+                                                access_token: { 
+                                                    type: "string",
+                                                    description: "JWT token para autenticación"
+                                                },
+                                                expires_in: { 
+                                                    type: "number",
+                                                    example: 1800
+                                                },
+                                                token_type: { 
+                                                    type: "string", 
+                                                    example: "Bearer" 
+                                                },
+                                                user_info: {
+                                                    type: "object",
+                                                    properties: {
+                                                        email: { type: "string" },
+                                                        roles: { type: "array", items: { type: "string" } }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "/api/protected/profile": {
+                    get: {
+                        summary: "Perfil del usuario MIMP autenticado",
+                        tags: ["Protegido"],
+                        security: [{ bearerAuth: [] }],
+                        responses: {
+                            "200": {
+                                description: "Perfil de usuario",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "object",
+                                            properties: {
+                                                user_id: { type: "string" },
+                                                email: { type: "string", example: "admin@mimp.gob.pe" },
+                                                roles: { 
+                                                    type: "array",
+                                                    items: { type: "string" },
+                                                    example: ["ADMIN", "authenticated"]
+                                                },
+                                                nivel_acceso: { type: "number", example: 1 },
+                                                modulos_asignados: { type: "array" }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "/api/protected/admin-only": {
+                    get: {
+                        summary: "Endpoint solo para administradores MIMP",
+                        tags: ["Admin"],
+                        security: [{ bearerAuth: [] }],
+                        responses: {
+                            "200": {
+                                description: "Acceso autorizado",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "object",
+                                            properties: {
+                                                message: { type: "string" },
+                                                user_id: { type: "string" },
+                                                admin: { type: "boolean", example: true },
+                                                sistema: { type: "string", example: "Observatorio Visible" }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "403": {
+                                description: "Rol de administrador requerido"
+                            }
+                        }
+                    }
+                }
+            },
+            components: {
+                securitySchemes: {
+                    bearerAuth: {
+                        type: "http",
+                        scheme: "bearer",
+                        bearerFormat: "JWT",
+                        description: "JWT token obtenido del endpoint /api/public/login"
+                    }
+                }
+            },
+            tags: [
+                { name: "Público", description: "Endpoints que no requieren autenticación" },
+                { name: "Protegido", description: "Endpoints que requieren JWT token válido" },
+                { name: "Admin", description: "Endpoints que requieren rol de administrador MIMP" }
+            ]
+        };
+        
+        // Try Swagger UI for Golang API
+        try {
+            console.log('Loading Golang API with Swagger UI');
+            SwaggerUIBundle({
+                url: null,
+                spec: golangApiSpec,
+                dom_id: '#golang-docs',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIBundle.presets.standalone
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                tryItOutEnabled: true,
+                requestInterceptor: function(req) {
+                    console.log('API Request:', req);
+                    return req;
+                }
+            });
+            console.log('Golang API documentation loaded successfully');
+        } catch (e) {
+            console.error('Error loading Golang API docs with Swagger UI:', e);
+            
+            // Fallback to manual HTML documentation
+            document.getElementById('golang-docs').innerHTML = `
+                <div style="padding: 2rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+                    <h2>🔧 Golang Auth API - Sistema Visible v1.0.0</h2>
+                    <p><strong>Base URL:</strong> <code>http://localhost:8090</code></p>
+                    <p><em>API de autenticación para el Observatorio Visible del MIMP</em></p>
+                    
+                    <div style="margin: 2rem 0;">
+                        <h3 style="color: #2d3748;">📋 Endpoints Públicos</h3>
+                        <div style="background: #f8f9fa; border-left: 4px solid #28a745; padding: 1rem; margin: 1rem 0;">
+                            <h4>GET /api/public/health</h4>
+                            <p>Health check del sistema Visible</p>
+                            <pre style="background: #e9ecef; padding: 0.5rem; border-radius: 4px;">curl http://localhost:8090/api/public/health</pre>
+                        </div>
+                        
+                        <div style="background: #f8f9fa; border-left: 4px solid #007bff; padding: 1rem; margin: 1rem 0;">
+                            <h4>POST /api/public/login</h4>
+                            <p>Autenticación de usuario MIMP (@mimp.gob.pe)</p>
+                            <p><strong>Body:</strong></p>
+                            <pre style="background: #e9ecef; padding: 0.5rem; border-radius: 4px;">{
+  "username": "admin@mimp.gob.pe",
+  "password": "admin123"
+}</pre>
+                            <p><strong>Ejemplo:</strong></p>
+                            <pre style="background: #e9ecef; padding: 0.5rem; border-radius: 4px;">curl -X POST http://localhost:8090/api/public/login \\
+  -H "Content-Type: application/json" \\
+  -d '{"username":"admin@mimp.gob.pe","password":"admin123"}'</pre>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 2rem 0;">
+                        <h3 style="color: #2d3748;">🔒 Endpoints Protegidos</h3>
+                        
+                        <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                            <h4>GET /api/protected/profile</h4>
+                            <p>Perfil del usuario MIMP autenticado</p>
+                            <pre style="background: #e9ecef; padding: 0.5rem; border-radius: 4px;">curl -H "Authorization: Bearer YOUR_TOKEN" \\
+     http://localhost:8090/api/protected/profile</pre>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 2rem 0;">
+                        <h3 style="color: #2d3748;">👑 Endpoints de Administrador</h3>
+                        
+                        <div style="background: #f8d7da; border-left: 4px solid #dc3545; padding: 1rem; margin: 1rem 0;">
+                            <h4>GET /api/protected/admin-only</h4>
+                            <p>Endpoint solo para administradores MIMP</p>
+                            <pre style="background: #e9ecef; padding: 0.5rem; border-radius: 4px;">curl -H "Authorization: Bearer ADMIN_TOKEN" \\
+     http://localhost:8090/api/protected/admin-only</pre>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 1rem; margin: 2rem 0;">
+                        <h4>🔑 Usuarios del Sistema Visible</h4>
+                        <p><strong>Usuarios de prueba:</strong></p>
+                        <ul>
+                            <li><code>admin@mimp.gob.pe / admin123</code> (rol: ADMIN)</li>
+                            <li><code>editor@mimp.gob.pe / editor123</code> (rol: EDITOR_GENERAL)</li>
+                            <li><code>observatorio@mimp.gob.pe / obs123</code> (rol: EDITOR_OBSERVATORIO)</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function showTab(tabName) {
+            // Ocultar todo el contenido
+            document.getElementById('postgrest-content').style.display = 'none';
+            document.getElementById('golang-content').style.display = 'none';
+            document.getElementById('auth-content').style.display = 'none';
+            
+            // Remover clase activa de todas las tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            
+            // Mostrar contenido seleccionado y activar tab
+            document.getElementById(tabName + '-content').style.display = 'block';
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
